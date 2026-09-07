@@ -37,3 +37,10 @@ safety:
 
   # [PRD 1.3 invariant 3]
   heartbeat_gap_limit_ms: 500
+
+  # ⚠ OD-A2 OPEN. [PRD 5.5] "a live process with a dead control thread is the
+  # dangerous case." The control-thread supervisor's no-progress timeout. Needs the
+  # M3 measured control-cycle distribution behind it. Do not guess: while OPEN the
+  # supervisor keeps unexpected-exit detection and disables only the progress
+  # watchdog.
+  control_watchdog_timeout_ms: OPEN

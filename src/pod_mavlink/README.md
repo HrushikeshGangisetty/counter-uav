@@ -29,21 +29,44 @@ stall"*. **M3 debugging order: link first, perception second.** Rate values are 
 **`send()` transmits nothing when the decision is SILENT.** It never substitutes a
 zero-velocity setpoint.
 
-## Status — [decision 0021](../../docs/decisions/0021-pod-mavlink-slice-boundaries.md)
+## Status — [decision 0021](../../docs/decisions/0021-pod-mavlink-slice-boundaries.md), [decision 0022](../../docs/decisions/0022-mavlink-runtime-rx-scheduler-control-loop.md)
 
-Implemented, pure, tested with no hardware and no pymavlink installed:
+Pure, tested with no hardware and no pymavlink installed:
 - `setpoint.py` — `build_set_position_target_local_ned()`, `MAV_FRAME_BODY_NED`,
   `SETPOINT_TYPE_MASK` (computed from `SETPOINT_TYPE_MASK_FIELDS`, never hand-written).
 - `rx.py` — `initial_vehicle_state()`/`initial_rc_state()` (fail-safe defaults before
   any message has arrived) and `apply_heartbeat()`/`apply_attitude()`/
   `apply_local_position_ned()`/`rc_state_from_channels()`, the per-message-type pure
-  updates the (not-yet-built) RX thread will call.
-- `link.py` — `MavlinkLink.send()` transmits `SET_POSITION_TARGET_LOCAL_NED` when
-  `decision is SEND`, nothing otherwise; `open()`/`close()` manage the real serial
-  handle, with `pymavlink` imported lazily so importing `pod_mavlink` itself never
-  requires it.
+  updates the RX thread calls.
 
-Not built this slice, and why: the **RX thread**, the **20 Hz scheduler** that would
-call `send()` on a cadence, and the **M3 watchdog** (`[PRD 5.5]`) all need a live
-serial port and a running process to thread against — that is SITL/M3 integration
-work, once the underlying pure logic above is in place to build it on.
+Running (decision 0022):
+- `link.py` — `MavlinkLink.send()` transmits `SET_POSITION_TARGET_LOCAL_NED` when
+  `decision is SEND`, nothing otherwise; `open()`/`recv()`/`close()` manage the one
+  real serial handle, with `pymavlink` imported lazily so importing `pod_mavlink`
+  itself never requires it.
+- `rx_runtime.py` — `MavlinkRxRuntime`: one daemon thread, the **single writer** of
+  `VehicleState`/`RCState` `[PRD 7.2]`. Holds no safety policy; malformed or missing
+  messages keep the last good state, never fabricate a healthy one.
+- `scheduler.py` — `FixedRateScheduler`: the 20 Hz driver `[PRD 1.1]`, injected
+  clock/sleep, drift-free deadlines, no busy-spin.
+- `control_loop.py` — `ControlLoop.tick()`: `rx.snapshot()` → `pod_state.step()` →
+  `pod_state.govern()` (final authority) → `MavlinkLink.send()`. Returns a
+  `CycleReport` structured log line. `PerceptionInputs` is the injected seam for the
+  future perception/guidance chain; with the default (empty) source every tick
+  governs to SILENT.
+
+- `supervisor.py` — `ControlSupervisor` (decision 0023): the `[PRD 5.5]` watchdog.
+  Owns the control thread; on **unexpected exit** or **no tick progress** it stops the
+  scheduler and reports (`ControlHealth`, `SupervisorReport`, `on_failure`). It never
+  sends, never commands, never substitutes zero velocity — silence + FC failsafe is
+  the safe state. Health: `STARTING`/`RUNNING`/`HEALTHY`/`STOPPED`/`FAILED`/
+  `WATCHDOG_TRIGGERED`; first terminal state wins; `stop()` is idempotent and
+  race-safe.
+
+  ⚠ The no-progress timeout is **OD-A2 OPEN** (`SafetyEnvelope.control_watchdog_timeout_ms`),
+  needs M3 measured cycle latency. While OPEN the progress watchdog is **disabled**
+  (logged at start) and only unexpected-exit detection runs. `simulation/` supplies a
+  stand-in via `synthetic_watchdog_timeout_ns()`.
+
+Exercised against SITL by `simulation/sitl/harness.py` — see
+[`simulation/sitl/run_sitl.md`](../../simulation/sitl/run_sitl.md).

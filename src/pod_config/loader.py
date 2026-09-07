@@ -61,6 +61,7 @@ def _safety(d: dict[str, Any]) -> SafetyEnvelope:
         lost_state_timeout_s=_v(d.get("lost_state_timeout_s")),
         max_frame_age_ms=_v(d.get("max_frame_age_ms")),
         heartbeat_gap_limit_ms=_v(d.get("heartbeat_gap_limit_ms")),
+        control_watchdog_timeout_ms=_v(d.get("control_watchdog_timeout_ms")),
     )
 
 

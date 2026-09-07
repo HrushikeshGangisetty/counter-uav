@@ -37,6 +37,7 @@ def test_open_values_are_the_sentinel_not_a_number(configs_dir) -> None:
     cfg = _load(configs_dir)
     assert is_open(cfg.airframe.safety.breakoff_radius_m), "OD-12 is OPEN"
     assert is_open(cfg.airframe.safety.bbox_area_terminal)
+    assert is_open(cfg.airframe.safety.control_watchdog_timeout_ms), "OD-A2 is OPEN"
     assert is_open(cfg.rc.ai_enable_channel), "RC channel numbers are in no document"
     assert is_open(cfg.mission.mode), "mission mode is selected per sortie"
 
@@ -76,4 +77,5 @@ def test_open_fields_are_reportable(configs_dir) -> None:
     """Boot logs must be able to state exactly which decisions are missing."""
     open_fields = _load(configs_dir).open_fields()
     assert "airframe.safety.breakoff_radius_m" in open_fields
+    assert "airframe.safety.control_watchdog_timeout_ms" in open_fields
     assert any(f.startswith("cameras[0]") for f in open_fields)

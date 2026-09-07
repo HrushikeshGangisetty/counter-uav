@@ -118,6 +118,16 @@ class SafetyEnvelope:
     max_frame_age_ms: float | _Open = OPEN
     heartbeat_gap_limit_ms: float | _Open = OPEN
 
+    #: ⚠ OPEN (OD-A2). [PRD 5.5] "a live process with a dead control thread is the
+    #: dangerous case." The control-thread supervisor
+    #: (pod_mavlink.supervisor.ControlSupervisor) uses this as the no-progress
+    #: timeout. Sizing it needs the M3 measured control-cycle distribution (how long
+    #: a legitimately slow tick can take) --- guessing it would either mask a real
+    #: stall or trip on a healthy jitter spike. OPEN until then: the supervisor runs
+    #: its unexpected-exit detection regardless and only disables the progress
+    #: watchdog while this is OPEN.
+    control_watchdog_timeout_ms: float | _Open = OPEN
+
 
 @dataclass(frozen=True, slots=True)
 class AirframeConfig:

@@ -1,8 +1,13 @@
 # ArduPilot SITL environment
 
-**Status: scaffold only. Nothing here launches a simulator yet.**
-Standing SITL up is task **A-P1-1** and belongs to **M2**; Implementation 0 provides
-the directory, the placeholders and the entry points, not the control system.
+**Status: the software path runs; a full flight does not.**
+`harness.py` (`SitlHarness`) wires the `pod_mavlink` RX thread, the 20 Hz scheduler,
+`pod_state` and `MavlinkLink.send()` to a MAVLink endpoint — see
+[`run_sitl.md`](run_sitl.md) and
+[decision 0022](../../docs/decisions/0022-mavlink-runtime-rx-scheduler-control-loop.md).
+A full pursuit/break-off flight still belongs to **M2** and needs the
+perception/guidance chain, which does not exist yet. `home` and `ardupilot_root` in
+`sitl.yaml` stay `OPEN` and are not read by the harness.
 
 ## External dependencies — documented, not auto-installed
 
@@ -18,12 +23,13 @@ too large and too version-sensitive to vendor here.
 
 Frame: **copter** [PRD 5.4], [DAY1 1].
 
-## Entry points (M2 — not implemented)
+## Entry points
 
-| File | Purpose | Phase |
+| File | Purpose | Status |
 |---|---|---|
-| `sitl.yaml` | Connection string, frame, home location, speedup | placeholders now |
-| `run_sitl.md` | The launch recipe once ArduPilot is installed locally | M2 |
+| `sitl.yaml` | Connection string, frame, home location, speedup | `connection` used; `home`/`ardupilot_root` still `OPEN`, unused |
+| `harness.py` | `SitlHarness` — opens the link, starts the RX thread, drives `ControlLoop` at 20 Hz | usable for the software path |
+| `run_sitl.md` | The launch recipe once ArduPilot is installed locally | usable |
 
 ## What M2 must demonstrate here
 
