@@ -1,0 +1,39 @@
+# Per-airframe configuration template.
+# [PRD 1.1] per-airframe differences are confined to a thin mechanical adapter plate
+# and a configuration file. This is that file. Copy, rename, fill in.
+#
+# ⚠ Everything under `safety` is boot-time immutable [PRD 7.2] and NOT runtime-
+# controllable from the ground station [PRD 1.3 invariant 6].
+
+airframe_id: TEMPLATE
+description: "Copy this file per host airframe. Do not fly the template."
+
+safety:
+  # From [ARCH Performance Envelope] (not superseded by PRD v1.1):
+  max_pursuit_speed_ms: 40.0
+  max_cruise_speed_ms: 20.0
+  max_altitude_m: 100.0
+
+  # ⚠ OD-12 OPEN. [PRD 4.8] "The break-off radius must be sized against measured
+  # end-to-end latency translated into distance, not against the millisecond figure.
+  # At intercept closing velocities the difference is tens of metres."
+  # Needs M3 measured latency. Do not guess.
+  breakoff_radius_m: OPEN
+
+  # [ARCH State Machine] gives TERMINAL as "bbox 30-45% of frame". The exact
+  # threshold within that band, and the break-off threshold above it, are not fixed
+  # by any document -> OPEN.
+  bbox_area_terminal: OPEN
+  bbox_area_breakoff: OPEN
+
+  # [ARCH State Machine]: target lost > 1.5 s exits LOCKED; LOST times out to SEARCH
+  # after 5 s.
+  target_lost_timeout_s: 1.5
+  lost_state_timeout_s: 5.0
+
+  # ⚠ OPEN: no document states a staleness threshold. [PRD 2.3] requires consumers to
+  # reject stale data; the number needs M3 measured latency behind it.
+  max_frame_age_ms: OPEN
+
+  # [PRD 1.3 invariant 3]
+  heartbeat_gap_limit_ms: 500

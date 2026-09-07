@@ -1,0 +1,43 @@
+# Pod-level configuration. Loaded at boot by pod_config; boot-time immutable.
+# `OPEN` means the decision is not made. It is a sentinel, not a value: reading it
+# raises ConfigOpenError rather than silently becoming a number.
+# Do not replace an OPEN with a guess. Close the decision, log it in
+# docs/decisions/, then edit here.
+
+contract_version: "1.0"
+
+mission:
+  # [PRD 1.3 invariant 5] set at takeoff, NOT runtime-mutable in flight.
+  # surveillance | intercept
+  mode: OPEN            # OPEN: selected per sortie by the operator RC channel
+
+rc_channels:
+  # The three switches are documented [PRD 1.3 invariant 4], [ARCH State Machine].
+  # Their channel NUMBERS are not stated in any project document -> OPEN.
+  ai_enable_channel: OPEN
+  lock_trigger_channel: OPEN
+  kill_switch_channel: OPEN
+  mission_mode_channel: OPEN
+  high_threshold_us: OPEN
+
+link:
+  # ✅ CLOSED 2026-09-07, CF-04 / OD-07. See docs/decisions/0004.
+  mavlink_baud: 115200
+  command_rate_hz: 20            # [PRD 1.1]
+  telemetry_rate_hz: 10          # [PRD 2.4]
+  # OD-07b OPEN: SRx_* stream rate VALUES are tuned at M3 from measured link
+  # utilisation. Only the message set is fixed [PRD 5.4].
+  srx_stream_rates: OPEN
+
+model:
+  # Populated from the model artifact manifest (schemas/model_artifact.schema.json).
+  hef_path: OPEN
+  input_width_px: 640            # [PRD 2.2] baseline; subject to OD-04
+  input_height_px: 640
+  nms_location: OPEN             # OPEN [PRD 5.2]: on-device vs host hailofilter
+  preprocess: OPEN               # OD-04 OPEN: letterbox | foveated_crop
+
+storage:
+  # OD-22 OPEN: PCIe is consumed by the AI HAT+, so microSD or USB. Capacity and
+  # sustained write rate for M5 imagery are unquantified.
+  pod_log_dir: OPEN

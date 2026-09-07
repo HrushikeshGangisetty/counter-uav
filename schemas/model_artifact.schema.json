@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kft.local/schemas/model_artifact.schema.json",
+  "title": "Model artifact manifest",
+  "description": "Person B -> Person A handoff. Required fields are those supported by a project document; see schemas/model_artifact.md.",
+  "type": "object",
+  "required": [
+    "artifact_path",
+    "input_width_px",
+    "input_height_px",
+    "nms_location",
+    "class_names",
+    "known_limitations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "artifact_path": {
+      "type": "string",
+      "description": "Path to the compiled .hef [PRD 4.7]"
+    },
+    "input_width_px": {
+      "type": "integer",
+      "description": "640 baseline, subject to OD-04 [PRD 2.2]"
+    },
+    "input_height_px": {
+      "type": "integer"
+    },
+    "nms_location": {
+      "enum": [
+        "on_device",
+        "host_hailofilter",
+        "unknown"
+      ],
+      "description": "Moves 1-3 ms of CPU [PRD 5.2]"
+    },
+    "class_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sustained_fps_aggregate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "AGGREGATE, not per camera [PRD 4.2]"
+    },
+    "known_limitations": {
+      "type": "string"
+    },
+    "quantisation": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "metric_name",
+        "test_set_id",
+        "small_object_regime_covered"
+      ],
+      "properties": {
+        "metric_name": {
+          "type": "string",
+          "description": "OPEN (OD-B3): no metric is fixed by any document"
+        },
+        "metric_value_fp32": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "metric_value_int8": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "test_set_id": {
+          "type": "string"
+        },
+        "small_object_regime_covered": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifact_version": {
+      "type": "string",
+      "description": "PROVISIONAL: no naming convention exists (Doc 2 5.6)"
+    },
+    "architecture": {
+      "type": "string"
+    },
+    "licence": {
+      "type": "string",
+      "description": "PROVISIONAL: one line per architecture trialled, see decision 0013"
+    },
+    "sha256": {
+      "type": "string"
+    }
+  }
+}

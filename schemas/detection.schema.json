@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kft.local/schemas/detection.schema.json",
+  "title": "Detection message schema v1.0 (TrackFrame)",
+  "description": "Frozen by decision 0008, closing OD-17/CF-10. The perception->control seam.",
+  "type": "object",
+  "required": [
+    "frame",
+    "tracks"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "frame": {
+      "type": "object",
+      "required": [
+        "camera_id",
+        "frame_seq",
+        "capture_ts_ns",
+        "width_px",
+        "height_px"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "camera_id": {
+          "type": "integer"
+        },
+        "frame_seq": {
+          "type": "integer",
+          "description": "Monotonic per camera; gaps mean dropped frames and are normal [PRD 5.2]"
+        },
+        "capture_ts_ns": {
+          "type": "integer",
+          "description": "CLOCK_MONOTONIC ns at DMA [PRD 2.2]"
+        },
+        "width_px": {
+          "type": "integer"
+        },
+        "height_px": {
+          "type": "integer"
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "track_id",
+          "detection"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "track_id": {
+            "type": "integer"
+          },
+          "frames_since_seen": {
+            "type": "integer"
+          },
+          "detection": {
+            "type": "object",
+            "required": [
+              "class_id",
+              "class_name",
+              "confidence",
+              "bbox"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "class_id": {
+                "type": "integer"
+              },
+              "class_name": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "bbox": {
+                "type": "object",
+                "required": [
+                  "x_px",
+                  "y_px",
+                  "w_px",
+                  "h_px"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "x_px": {
+                    "type": "number"
+                  },
+                  "y_px": {
+                    "type": "number"
+                  },
+                  "w_px": {
+                    "type": "number"
+                  },
+                  "h_px": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

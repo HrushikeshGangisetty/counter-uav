@@ -1,0 +1,28 @@
+# Camera 1 intrinsics --- destination for Person C's OpenCV calibration output.
+#
+# ⚠ OD-02 OPEN and it GATES M2. [PRD 5.4] "Intrinsic calibration is an open blocker,
+# not a nice-to-have. Until fx, fy, cx, cy and the distortion coefficients are
+# measured on the actual camera and lens, every number downstream of the geometry
+# stage is fabricated. Do this before M2, not before M4."
+#
+# ⚠ OD-20 OPEN: distortion_model must be chosen before calibrating. The interim
+# 160 deg fisheye needs fisheye_equidistant (k1-k4 via cv2.fisheye); a telephoto
+# flight lens (OD-19) flips back to pinhole_radtan (k1,k2,p1,p2,k3).
+#
+# ⚠ Intrinsics belong to the camera AND lens together: recalibrate when OD-19 lands.
+
+camera_id: 1
+width_px: 1456          # [PRD 2.1] IMX296, 1456x1088 @ 60 fps
+height_px: 1088
+lens_description: "interim: 160 deg fisheye bundled with the innomaker IMX296 unit (OD-01 interim, expires at OD-19)"
+
+distortion_model: OPEN  # pinhole_radtan | fisheye_equidistant  (OD-20)
+fx_px: OPEN
+fy_px: OPEN
+cx_px: OPEN
+cy_px: OPEN
+distortion_coeffs: OPEN
+reprojection_error_px: OPEN
+
+calibrated: false
+calibration_id: ""

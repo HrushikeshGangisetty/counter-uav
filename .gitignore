@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+# Local hardware/flight artefacts --- never committed
+*.hef
+*.tlog
+*.bin
+*.BIN
+logs/
+recordings/
+.DS_Store

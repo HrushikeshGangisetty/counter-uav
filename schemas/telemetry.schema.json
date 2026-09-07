@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kft.local/schemas/telemetry.schema.json",
+  "title": "Pod -> GCS telemetry frame",
+  "description": "WebSocket JSON at ~10 Hz [PRD 2.4, 5.5]. Keys are exactly the Python attribute names in pod_contracts.TelemetryFrame; the kotlinx.serialization mirror must match. Any change touches both or they diverge [PRD 5.5].",
+  "type": "object",
+  "required": [
+    "capture_ts_ns",
+    "frame_seq",
+    "state",
+    "decision",
+    "mission_mode",
+    "tracks"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "capture_ts_ns": {
+      "type": "integer",
+      "description": "CLOCK_MONOTONIC nanoseconds at DMA [PRD 2.2]"
+    },
+    "frame_seq": {
+      "type": "integer",
+      "description": "Required by [PRD 7.2]"
+    },
+    "state": {
+      "enum": [
+        "IDLE",
+        "SEARCH",
+        "LOCKED",
+        "TERMINAL",
+        "BREAKOFF",
+        "ENGAGE",
+        "LOST",
+        "ABORT"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "send",
+        "silent"
+      ],
+      "description": "silent means nothing is transmitted; it is NOT zero velocity [PRD 4.3]"
+    },
+    "mission_mode": {
+      "enum": [
+        "surveillance",
+        "intercept"
+      ]
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "track_id",
+          "class_name",
+          "confidence",
+          "bbox_area_fraction",
+          "is_locked"
+        ],
+        "properties": {
+          "track_id": {
+            "type": "integer"
+          },
+          "class_name": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "bbox_area_fraction": {
+            "type": "number"
+          },
+          "is_locked": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "locked_track_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "last_transition_reason": {
+      "type": "string"
+    },
+    "control_latency_p95_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Control path only. Glass-to-glass video latency is a SEPARATE figure [PRD 6.3]"
+    }
+  }
+}

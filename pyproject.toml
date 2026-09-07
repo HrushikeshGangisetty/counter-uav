@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kft-cuav-pod"
+version = "0.0.0"
+description = "KFT Counter-UAV Advisory Pod --- companion-computer software"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Kept separate on purpose: the pure modules must be testable on any laptop with no
+# hardware and no heavyweight dependencies [PRD 4.3].
+dev = ["pytest>=7.4", "ruff>=0.4", "mypy>=1.8", "types-PyYAML"]
+sitl = ["pymavlink>=2.4", "MAVProxy>=1.8"]          # M2
+vision = ["numpy>=1.24", "opencv-python>=4.8"]      # M2, pod_geometry
+# NOTE: HailoRT, the Hailo GStreamer elements and libcamera are NOT pip
+# dependencies. They are platform packages on Raspberry Pi OS Bookworm and are
+# documented in docs/developer-setup.md rather than faked here.
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+addopts = "-ra --strict-markers --strict-config"
+xfail_strict = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "simulation"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "ANN201", "ANN401"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "pod_guidance", "pod_mavlink", "pod_perception", "pod_state", "simulation"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN201"]
+"scripts/**" = ["ANN201"]
+# These three functions decode untyped external data (YAML scalars, JSON records).
+# Any is the honest annotation at that boundary; the typed contract starts after it.
+"src/pod_contracts/codec.py" = ["ANN401"]
+"src/pod_config/loader.py" = ["ANN401"]
+"src/pod_config/schema.py" = ["ANN401"]
+"src/pod_perception/pipeline.py" = ["ANN401"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = "src"
+packages = ["pod_contracts", "pod_config", "pod_geometry", "pod_guidance", "pod_state", "pod_mavlink", "pod_perception", "pod_gcs"]
+strict = false
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = ["yaml", "yaml.*"]
+ignore_missing_imports = true

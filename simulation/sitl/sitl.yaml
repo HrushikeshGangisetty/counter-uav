@@ -1,0 +1,6 @@
+# SITL placeholders. No value here is a project decision.
+frame: copter                 # [PRD 5.4], [DAY1 1]
+connection: "udp:127.0.0.1:14550"
+speedup: 1
+home: OPEN                    # OPEN: no test-site coordinates exist in any document
+ardupilot_root: OPEN          # OPEN: local checkout path, per developer
