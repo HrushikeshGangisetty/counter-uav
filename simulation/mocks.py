@@ -11,6 +11,7 @@ they can never be mistaken for calibration output or flight data.
 
 from __future__ import annotations
 
+from pod_config import SafetyEnvelope
 from pod_contracts import (
     BBox,
     Detection,
@@ -79,6 +80,7 @@ def make_vehicle_state(
     mode: FlightMode = FlightMode.GUIDED,
     armed: bool = True,
     heartbeat_age_ns: int = 0,
+    pos_down_m: float = -20.0,
 ) -> VehicleState:
     return VehicleState(
         recv_ts_ns=now_ns,
@@ -93,7 +95,7 @@ def make_vehicle_state(
         yaw_rate_rads=0.0,
         pos_north_m=0.0,
         pos_east_m=0.0,
-        pos_down_m=-20.0,
+        pos_down_m=pos_down_m,
         vel_north_ms=0.0,
         vel_east_ms=0.0,
         vel_down_ms=0.0,
@@ -145,6 +147,23 @@ def make_velocity_command(seq: int = 0) -> VelocityCommand:
     )
 
 
+def make_safety_envelope(**overrides) -> SafetyEnvelope:
+    """A SafetyEnvelope mirroring the shipped `_template.yaml` [ARCH Performance
+    Envelope] values --- documented values populated, undocumented ones left OPEN via
+    the SafetyEnvelope dataclass default. Not a measurement; matches the template so
+    tests exercise the same OPEN/closed split the real boot-time config has."""
+    defaults = dict(
+        max_pursuit_speed_ms=40.0,
+        max_cruise_speed_ms=20.0,
+        max_altitude_m=100.0,
+        target_lost_timeout_s=1.5,
+        lost_state_timeout_s=5.0,
+        heartbeat_gap_limit_ms=500,
+    )
+    defaults.update(overrides)
+    return SafetyEnvelope(**defaults)
+
+
 def make_state_input(
     seq: int = 0,
     *,
@@ -155,7 +174,7 @@ def make_state_input(
     now_ns = seq * NS_PER_FRAME_60HZ
     return StateInput(
         now_ns=now_ns,
-        frame=make_frame(seq),
+        frame=kwargs.pop("frame", make_frame(seq)),
         vehicle=kwargs.pop("vehicle", make_vehicle_state(now_ns)),
         rc=kwargs.pop("rc", make_rc_state(now_ns)),
         mission_mode=mission_mode,

@@ -71,3 +71,9 @@ no_implicit_optional = true
 [[tool.mypy.overrides]]
 module = ["yaml", "yaml.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# pymavlink is the 'sitl' extra, not a dev dependency [README "No hardware
+# required"]. Only imported lazily inside MavlinkLink.open().
+module = ["pymavlink.*"]
+ignore_missing_imports = true

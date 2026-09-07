@@ -48,6 +48,8 @@ Status: 🔴 OPEN · 🟡 PROPOSED / DEFERRED / INTERIM · ✅ CLOSED · ⚠ BLO
 | OD-12 | Per-airframe break-off radius, sized from **measured** latency | 🔴 OPEN | A |
 | OD-A1 | The six P0 bench go/no-go pass/fail thresholds | 🔴 OPEN | C with A |
 | OD-C1 | Calibration acceptance thresholds and re-calibration policy | 🔴 OPEN | C |
+| OD-U9 | BREAKOFF manoeuvre duration — no document states how long the climb+yaw-away runs, so `pod_state.machine.step()` cannot implement the BREAKOFF exit yet | 🔴 OPEN | A |
+| OD-U10 | LOST state's 5 s timeout exit to SEARCH — `step()` is pure/no-clock and `StateInput` carries no time-since-LOST signal, so it cannot be computed as specified. Not a safety gap: LOST always emits SILENT. See [0020](0020-state-machine-envelope-argument-and-scope.md) | 🔴 OPEN | A |
 
 ## M4 and later
 
