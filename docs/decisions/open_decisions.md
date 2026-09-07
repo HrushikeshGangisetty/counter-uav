@@ -50,6 +50,7 @@ Status: 🔴 OPEN · 🟡 PROPOSED / DEFERRED / INTERIM · ✅ CLOSED · ⚠ BLO
 | OD-C1 | Calibration acceptance thresholds and re-calibration policy | 🔴 OPEN | C |
 | OD-U9 | BREAKOFF manoeuvre duration — no document states how long the climb+yaw-away runs, so `pod_state.machine.step()` cannot implement the BREAKOFF exit yet | 🔴 OPEN | A |
 | OD-U10 | LOST state's 5 s timeout exit to SEARCH — `step()` is pure/no-clock and `StateInput` carries no time-since-LOST signal, so it cannot be computed as specified. Not a safety gap: LOST always emits SILENT. See [0020](0020-state-machine-envelope-argument-and-scope.md) | 🔴 OPEN | A |
+| OD-A2 | Control-thread watchdog no-progress timeout (`SafetyEnvelope.control_watchdog_timeout_ms`). `[PRD 5.5]` requires the watchdog; the timeout must be sized from the **M3 measured control-cycle distribution**, not guessed. While OPEN, `ControlSupervisor` runs unexpected-exit detection only and disables the progress watchdog (logged at start). See [0023](0023-control-thread-supervisor.md) | 🔴 OPEN | A |
 
 ## M4 and later
 

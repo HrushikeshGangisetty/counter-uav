@@ -53,11 +53,11 @@ class MavlinkLink:
     other module may import pymavlink/pyserial/mavutil) and electrically by the
     ADuM1201 galvanic isolator.
 
-    ⚠ Not yet implemented this slice: the RX thread (single writer of VehicleState /
-    RCState [PRD 7.2], via pod_mavlink.rx) and the M3 control-loop watchdog ("a live
-    process with a dead control thread is the dangerous case" [PRD 5.5]) both need a
-    live serial port and a running process to thread against --- that is SITL/M3
-    integration work, not this module's outbound send() path.
+    The RX thread (rx_runtime.MavlinkRxRuntime, the single writer of VehicleState /
+    RCState [PRD 7.2]) reads through this object's recv(); the control loop
+    (control_loop.ControlLoop) and its [PRD 5.5] watchdog (supervisor.ControlSupervisor)
+    drive send(). This class stays purely the handle: open / recv / send / close, no
+    threading and no policy of its own.
     """
 
     def __init__(self, device: str, baud: int = BAUD_RATE) -> None:
@@ -118,6 +118,35 @@ class MavlinkLink:
         )
         self._conn.mav.set_position_target_local_ned_send(**fields)
         return True
+
+    def recv(self, *, timeout_s: float) -> object:
+        """Block up to ``timeout_s`` for the next inbound MAVLink message, or None.
+
+        [PRD 1.3 invariant 7] the RX runtime (``rx_runtime.MavlinkRxRuntime``) is the
+        only caller. Routing the read through the one object that owns the handle
+        keeps "exactly one software module holds the serial handle" literally true ---
+        there is still a single connection, opened once by ``open()``. This method
+        does no decoding: it hands the raw pymavlink message object straight back, and
+        the pure ``rx`` builders turn it into ``VehicleState``/``RCState``.
+        """
+        if self._conn is None:
+            raise RuntimeError("pod_mavlink.MavlinkLink.recv: link is not open")
+        return self._conn.recv_match(blocking=True, timeout=timeout_s)
+
+    @property
+    def flightmode(self) -> str:
+        """The FC's current mode string as pymavlink resolves it (e.g. ``"GUIDED"``).
+
+        Autopilot-specific ``custom_mode``-to-name mapping is pymavlink's job, not
+        this project's --- reading it here avoids hard-coding ArduPilot's
+        ``GUIDED == 4``. Only meaningful after at least one HEARTBEAT has been
+        received; pymavlink returns ``"MAV"`` or similar until then, which the RX
+        runtime maps to ``FlightMode.OTHER`` (fail-safe: not GUIDED).
+        """
+        if self._conn is None:
+            raise RuntimeError("pod_mavlink.MavlinkLink.flightmode: link is not open")
+        mode: str = self._conn.flightmode
+        return mode
 
     def close(self) -> None:
         if self._conn is not None:

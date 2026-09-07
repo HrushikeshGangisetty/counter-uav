@@ -49,12 +49,14 @@ known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN201"]
 "scripts/**" = ["ANN201"]
-# These three functions decode untyped external data (YAML scalars, JSON records).
-# Any is the honest annotation at that boundary; the typed contract starts after it.
+# These functions decode untyped external data (YAML scalars, JSON records, raw
+# pymavlink message objects). Any is the honest annotation at that boundary; the
+# typed contract (VehicleState/RCState/...) starts immediately after it.
 "src/pod_contracts/codec.py" = ["ANN401"]
 "src/pod_config/loader.py" = ["ANN401"]
 "src/pod_config/schema.py" = ["ANN401"]
 "src/pod_perception/pipeline.py" = ["ANN401"]
+"src/pod_mavlink/rx_runtime.py" = ["ANN401"]
 
 [tool.mypy]
 python_version = "3.10"
