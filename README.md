@@ -44,13 +44,6 @@ docs/                architecture, contracts, setup, testing, decision log
 scripts/             fixture regeneration
 ```
 
-## Ownership `[Team 2026-09-07]`
-
-| Role | Name | Scope |
-|---|---|---|
-| A (lead) | **Hrushikesh** | Systems & integration, and the ground station |
-| B | **Raghava** | ML & dataset |
-| C | **Sreenija** | Camera & vision geometry |
 
 ## The rules that do not bend
 
