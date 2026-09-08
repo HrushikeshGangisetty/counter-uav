@@ -37,14 +37,14 @@ xfail_strict = true
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-src = ["src", "tests", "simulation"]
+src = ["src", "tests", "simulation", "tools"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "ANN201", "ANN401"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "pod_guidance", "pod_mavlink", "pod_perception", "pod_state", "simulation"]
+known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "pod_guidance", "pod_mavlink", "pod_perception", "pod_state", "simulation", "tools"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN201"]
@@ -57,11 +57,14 @@ known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "
 "src/pod_config/schema.py" = ["ANN401"]
 "src/pod_perception/pipeline.py" = ["ANN401"]
 "src/pod_mavlink/rx_runtime.py" = ["ANN401"]
+# Decodes untyped YAML scalars into the typed CalibrationBundle; Any is the honest
+# annotation at that boundary, matching src/pod_config/loader.py above.
+"tools/calibration/store.py" = ["ANN401"]
 
 [tool.mypy]
 python_version = "3.10"
-mypy_path = "src"
-packages = ["pod_contracts", "pod_config", "pod_geometry", "pod_guidance", "pod_state", "pod_mavlink", "pod_perception", "pod_gcs"]
+mypy_path = ["src", "."]
+packages = ["pod_contracts", "pod_config", "pod_geometry", "pod_guidance", "pod_state", "pod_mavlink", "pod_perception", "pod_gcs", "tools"]
 strict = false
 warn_unused_configs = true
 warn_redundant_casts = true
@@ -78,4 +81,11 @@ ignore_missing_imports = true
 # pymavlink is the 'sitl' extra, not a dev dependency [README "No hardware
 # required"]. Only imported lazily inside MavlinkLink.open().
 module = ["pymavlink.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# picamera2 is a Raspberry Pi OS platform package, not a pip dependency
+# (docs/developer-setup.md). Only imported lazily inside
+# tools/camera_bench/capture.py.
+module = ["picamera2.*"]
 ignore_missing_imports = true

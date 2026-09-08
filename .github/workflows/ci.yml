@@ -19,8 +19,8 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: Lint
         run: |
-          python -m ruff check src tests simulation scripts
-          python -m ruff format --check src tests simulation scripts
+          python -m ruff check src tests simulation scripts tools
+          python -m ruff format --check src tests simulation scripts tools
       - name: Type check
         run: python -m mypy
       # Run the architecture tests as their own step so a boundary violation is

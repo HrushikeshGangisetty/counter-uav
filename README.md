@@ -37,6 +37,7 @@ src/pod_gcs/         WebSocket telemetry, RTSP video              (M4)
 configs/             pod.yaml, airframes/, camera/
 schemas/             JSON Schema + the model handoff contract
 simulation/          synthetic detections, replay, SITL scaffold, mocks
+tools/               camera bench + calibration tooling (Person C, not flight code)
 tests/               architecture/ contracts/ unit/ replay/
 fixtures/            deterministic replay data
 docs/                architecture, contracts, setup, testing, decision log

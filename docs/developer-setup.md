@@ -57,7 +57,7 @@ one laptop is worse than a documented command.
 |---|---|---|
 | **A — systems & integration** | `src/pod_perception/`, `src/pod_guidance/`, `src/pod_state/`, `src/pod_mavlink/`, `simulation/sitl/` | [architecture.md](architecture.md), [contracts.md](contracts.md) |
 | **B — ML & dataset** | [`schemas/model_artifact.md`](../schemas/model_artifact.md) | decisions [0009](decisions/0009-counter-uav-single-class.md), [0013](decisions/0013-yolov8-licence-deferred.md), [0014](decisions/0014-public-dataset-training-now.md) |
-| **C — camera & geometry** | `src/pod_geometry/`, `configs/camera/` | decisions [0010](decisions/0010-interim-fisheye-lens.md), [contracts.md](contracts.md) |
+| **C — camera & geometry** | `src/pod_geometry/`, `tools/camera_bench/`, `tools/calibration/`, `configs/camera/` | [camera_validation_p0.md](camera_validation_p0.md), decisions [0010](decisions/0010-interim-fisheye-lens.md) · [0024](decisions/0024-camera-validation-tooling-boundaries.md), [contracts.md](contracts.md) |
 
 Mocks for whatever you do not own yet are in `simulation/mocks.py`, so none of you is
 blocked on the others:

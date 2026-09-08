@@ -46,8 +46,8 @@ Status: 🔴 OPEN · 🟡 PROPOSED / DEFERRED / INTERIM · ✅ CLOSED · ⚠ BLO
 | OD-07b | ArduPilot `SRx_*` stream-rate **values** | 🔴 OPEN — the mitigation at 115200 | A |
 | OD-22 | Pod-side storage: microSD or USB, capacity, sustained write rate | 🔴 OPEN | A |
 | OD-12 | Per-airframe break-off radius, sized from **measured** latency | 🔴 OPEN | A |
-| OD-A1 | The six P0 bench go/no-go pass/fail thresholds | 🔴 OPEN | C with A |
-| OD-C1 | Calibration acceptance thresholds and re-calibration policy | 🔴 OPEN | C |
+| OD-A1 | The six P0 bench go/no-go pass/fail thresholds | 🔴 OPEN — `tools.camera_bench.analyse_capture` produces the raw figures ([0024](0024-camera-validation-tooling-boundaries.md)); the thresholds are still unset | C with A |
+| OD-C1 | Calibration acceptance thresholds and re-calibration policy | 🔴 OPEN — `tools.calibration.CalibrationBundle` records the evidence ([0024](0024-camera-validation-tooling-boundaries.md)); max-reprojection / min-views thresholds still unset | C |
 | OD-U9 | BREAKOFF manoeuvre duration — no document states how long the climb+yaw-away runs, so `pod_state.machine.step()` cannot implement the BREAKOFF exit yet | 🔴 OPEN | A |
 | OD-U10 | LOST state's 5 s timeout exit to SEARCH — `step()` is pure/no-clock and `StateInput` carries no time-since-LOST signal, so it cannot be computed as specified. Not a safety gap: LOST always emits SILENT. See [0020](0020-state-machine-envelope-argument-and-scope.md) | 🔴 OPEN | A |
 | OD-A2 | Control-thread watchdog no-progress timeout (`SafetyEnvelope.control_watchdog_timeout_ms`). `[PRD 5.5]` requires the watchdog; the timeout must be sized from the **M3 measured control-cycle distribution**, not guessed. While OPEN, `ControlSupervisor` runs unexpected-exit detection only and disables the progress watchdog (logged at start). See [0023](0023-control-thread-supervisor.md) | 🔴 OPEN | A |

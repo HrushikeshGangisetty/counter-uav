@@ -21,8 +21,8 @@ arch:
 	python -m pytest tests/architecture -v
 
 lint:
-	python -m ruff check src tests simulation scripts
-	python -m ruff format --check src tests simulation scripts
+	python -m ruff check src tests simulation scripts tools
+	python -m ruff format --check src tests simulation scripts tools
 
 # MYPY_CACHE_DIR is overridable: mypy's sqlite cache fails on some network/synced
 # filesystems. If you see 'sqlite3.OperationalError: disk I/O error', run
