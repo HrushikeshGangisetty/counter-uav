@@ -60,6 +60,11 @@ known-first-party = ["pod_config", "pod_contracts", "pod_gcs", "pod_geometry", "
 # Decodes untyped YAML scalars into the typed CalibrationBundle; Any is the honest
 # annotation at that boundary, matching src/pod_config/loader.py above.
 "tools/calibration/store.py" = ["ANN401"]
+# Decode untyped JSON records (dataset samples, model artifact manifests) into typed
+# dataclasses; Any is the honest annotation at that boundary, same rationale as
+# tools/calibration/store.py above.
+"tools/ml/dataset/loader.py" = ["ANN401"]
+"tools/ml/artifacts/codec.py" = ["ANN401"]
 
 [tool.mypy]
 python_version = "3.10"
