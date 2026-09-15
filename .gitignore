@@ -18,3 +18,6 @@ htmlcov/
 logs/
 recordings/
 .DS_Store
+
+# graphify knowledge graph output (local, regenerated via `graphify update .`)
+graphify-out/
