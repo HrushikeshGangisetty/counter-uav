@@ -11,6 +11,28 @@ modules replay-testable [PRD 2.3].
 
 from __future__ import annotations
 
-from .generator import Scenario, closing_target, generate
+from .generator import (
+    Scenario,
+    closing_target,
+    generate,
+    target_appears,
+    target_centered,
+    target_crossing,
+    target_high,
+    target_left,
+    target_low,
+    target_right,
+)
 
-__all__ = ["Scenario", "closing_target", "generate"]
+__all__ = [
+    "Scenario",
+    "closing_target",
+    "generate",
+    "target_appears",
+    "target_centered",
+    "target_crossing",
+    "target_high",
+    "target_left",
+    "target_low",
+    "target_right",
+]

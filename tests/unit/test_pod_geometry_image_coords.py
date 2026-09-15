@@ -55,6 +55,13 @@ def test_corners_map_to_unit_square() -> None:
     assert pixel_to_normalized(W, H, W, H) == NormalizedImagePoint(1.0, 1.0)
 
 
+def test_off_centre_pixel_produces_the_correct_sign() -> None:
+    right_low = pixel_to_normalized(W * 0.75, H * 0.75, W, H)
+    assert right_low.nx > 0 and right_low.ny > 0
+    left_high = pixel_to_normalized(W * 0.25, H * 0.25, W, H)
+    assert left_high.nx < 0 and left_high.ny < 0
+
+
 def test_normalisation_is_deterministic() -> None:
     a = pixel_to_normalized(123.4, 567.8, W, H)
     b = pixel_to_normalized(123.4, 567.8, W, H)
@@ -129,6 +136,13 @@ def test_ray_is_a_unit_vector_and_points_right_and_down() -> None:
     x, y, z = camera_ray_from_pixel(intr.cx_px + 100, intr.cy_px + 200, intr)
     assert x > 0 and y > 0 and z > 0
     assert (x * x + y * y + z * z) == pytest.approx(1.0)
+
+
+def test_camera_ray_from_pixel_is_deterministic() -> None:
+    intr = _synthetic_calibrated_intrinsics()
+    a = camera_ray_from_pixel(intr.cx_px + 100, intr.cy_px + 200, intr)
+    b = camera_ray_from_pixel(intr.cx_px + 100, intr.cy_px + 200, intr)
+    assert a == b
 
 
 def test_camera_ray_from_normalized_matches_from_pixel() -> None:

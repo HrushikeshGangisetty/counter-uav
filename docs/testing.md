@@ -53,6 +53,10 @@ CI fails if a regeneration produces a diff.
 encode no assumption about lens, range or target size — those are OD-19 and OD-06
 questions, and inventing them here would put fabricated numbers into everyone's tests.
 
+See [`docs/synthetic_replay.md`](synthetic_replay.md) for the full synthetic
+frame -> detection -> image-coordinates -> camera-ray path, including the
+static-position scenarios and what is REAL vs SYNTHETIC vs OPEN in it.
+
 ## Adding tests
 
 1. If it needs a clock, hardware, the network or a file, it does not belong in a pure

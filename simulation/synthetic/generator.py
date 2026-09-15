@@ -75,3 +75,70 @@ def generate(scenario: Scenario) -> Iterator[TrackFrame]:
 def closing_target(frames: int = 120) -> Scenario:
     """The canonical M2 sequence: a target growing from small to break-off size."""
     return Scenario(name="closing_target", frames=frames)
+
+
+# --- static-position presets --------------------------------------------------
+#
+# Fixed image-space positions for exercising pod_geometry's normalisation and
+# ray math without a moving target. Centre offsets are arbitrary but obviously
+# synthetic (round fractions); they are not a field of view or a lens choice.
+
+
+def target_centered(frames: int = 1) -> Scenario:
+    return Scenario(
+        name="target_centered", frames=frames, start_centre=(0.5, 0.5), end_centre=(0.5, 0.5)
+    )
+
+
+def target_left(frames: int = 1) -> Scenario:
+    return Scenario(
+        name="target_left", frames=frames, start_centre=(0.15, 0.5), end_centre=(0.15, 0.5)
+    )
+
+
+def target_right(frames: int = 1) -> Scenario:
+    return Scenario(
+        name="target_right", frames=frames, start_centre=(0.85, 0.5), end_centre=(0.85, 0.5)
+    )
+
+
+def target_high(frames: int = 1) -> Scenario:
+    """ "High" in image space: nearer the top edge, i.e. smaller y_px (+y is down)."""
+    return Scenario(
+        name="target_high", frames=frames, start_centre=(0.5, 0.15), end_centre=(0.5, 0.15)
+    )
+
+
+def target_low(frames: int = 1) -> Scenario:
+    return Scenario(
+        name="target_low", frames=frames, start_centre=(0.5, 0.85), end_centre=(0.5, 0.85)
+    )
+
+
+def target_crossing(frames: int = 60) -> Scenario:
+    """Target moves left-to-right across the frame at constant size."""
+    return Scenario(
+        name="target_crossing",
+        frames=frames,
+        start_area_fraction=0.01,
+        end_area_fraction=0.01,
+        start_centre=(0.1, 0.5),
+        end_centre=(0.9, 0.5),
+    )
+
+
+def target_appears(frames: int = 40, appears_at: int = 20) -> Scenario:
+    """No target for the first ``appears_at`` frames, then a centred target.
+
+    Reuses ``dropout_frames`` --- appearance is just dropout applied to the head
+    of the sequence rather than the middle or tail.
+    """
+    return Scenario(
+        name="target_appears",
+        frames=frames,
+        start_centre=(0.5, 0.5),
+        end_centre=(0.5, 0.5),
+        start_area_fraction=0.01,
+        end_area_fraction=0.01,
+        dropout_frames=tuple(range(appears_at)),
+    )
